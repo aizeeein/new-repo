@@ -4,8 +4,11 @@ import { AiOutlineMenu } from "react-icons/ai";
 import Avatar from "../Avatar";
 import { useCallback, useState } from "react";
 import MenuItem from "./MenuItem";
+
 import useRegisterModal from "@/app/hooks/useRegisterModal";
 import useLoginModal from "@/app/hooks/useLoginModal";
+import useRentModal from "@/app/hooks/useRentModal";
+
 import { data_staff } from "@prisma/client";
 import { signOut } from "next-auth/react";
 
@@ -16,17 +19,26 @@ interface UserMenuProps {
 const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
   const registerModal = useRegisterModal();
   const loginModal = useLoginModal();
+  const rentModal = useRentModal();
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleOpen = useCallback(() => {
     setIsOpen((value) => !value);
   }, []);
 
+  const onRent = useCallback(() => {
+    if (!currentUser) {
+      return loginModal.onOpen();
+    }
+
+    rentModal.onOpen()
+  }, [currentUser, loginModal, rentModal]);
+
   return (
     <div className="relative">
       <div className="flex flex-row items-center gap-3">
         <div
-          onClick={() => {}}
+          onClick={onRent}
           className="
             hidden
             md:block
@@ -40,7 +52,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
             cursor-pointer
             "
         >
-          KOMIDA
+          {currentUser ? <h1>Halo {currentUser.nama}</h1> : <h1>KOMIDA</h1>}
         </div>
         <div
           onClick={toggleOpen}
@@ -85,7 +97,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
             {currentUser ? (
               <>
                 <MenuItem onClick={() => {}} label="Data Staff" />
-                <MenuItem onClick={() => {}} label="Kpi staff" />
+                <MenuItem onClick={rentModal.onOpen} label="Kpi staff" />
                 <MenuItem onClick={() => {}} label="Progress Staff" />
                 <MenuItem onClick={() => {}} label="Capaian" />
                 <hr />

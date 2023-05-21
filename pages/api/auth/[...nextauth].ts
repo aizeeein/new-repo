@@ -21,31 +21,41 @@ export const authOptions: AuthOptions = {
     CredentialsProvider({
       name: "credentials",
       credentials: {
-        email: { label: "email", type: "text" },
+        nik: { label: "nik", type: "text" },
         password: { label: "password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
+        if (!credentials?.nik || !credentials?.password) {
           throw new Error("Invalid credentials");
         }
 
         const user = await prisma.data_staff.findUnique({
           where: {
-            email: credentials.email,
+            nik: credentials.nik,
           },
         });
 
         if (!user || !user?.hashedPassword) {
-          throw new Error("Invalid credentials");
+          throw new Error("Akun Tidak Ditemukan");
         }
 
-        const isCorrectPassword = await bcrypt.compare(
-          credentials.password,
-          user.hashedPassword
-        );
+        if (user?.hashedPassword.length > 29) {
+          const isCorrectPassword = await bcrypt.compare(
+            credentials.password,
+            user.hashedPassword
+          );
 
-        if (!isCorrectPassword) {
-          throw new Error("Invalid credentials");
+          if (!isCorrectPassword) {
+            throw new Error("Invalid Password");
+          }
+        } else {
+          if (user?.hashedPassword.length < 30) {
+            const isCorrectPassword =
+              credentials.password === user.hashedPassword;
+            if (!isCorrectPassword) {
+              throw new Error("Invalid Password");
+            }
+          }
         }
 
         return user;
@@ -58,6 +68,7 @@ export const authOptions: AuthOptions = {
   debug: process.env.NODE_ENV === "development",
   session: {
     strategy: "jwt",
+    maxAge: 10 * 60 * 60,
   },
   secret: process.env.NEXTAUTH_SECRET,
 };

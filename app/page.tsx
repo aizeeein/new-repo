@@ -1,10 +1,17 @@
-const Home = () => {
+import getListings from "./actions/getListings";
+import Button from "./components/Button";
+import ClientOnly from "./components/ClientOnly";
+import Container from "./components/Container";
+import StaffClient from "./components/StaffClient";
+
+export default async function Home() {
+  const listings = await getListings();
 
   return (
-      <div className="text-rose-500">
-        KSP Mitra Dhuafa
-      </div>
-  )
+    <ClientOnly>
+      <Container>
+        <StaffClient listings={listings} />
+      </Container>
+    </ClientOnly>
+  );
 }
-
-export default Home;

@@ -8,9 +8,27 @@ datasource db {
 }
 
 model data_staff {
-  nik            String @id @unique(map: "nik") @db.VarChar(255)
+  id             Int    @unique(map: "id") @default(autoincrement())
+  nik            String @unique(map: "nik") @db.VarChar(255)
   nama           String @db.VarChar(255)
   cabang         String @db.VarChar(255)
   email          String @unique(map: "email") @db.VarChar(255)
   hashedPassword String @db.VarChar(255)
+  kpi_1          Int
+  kpi_2          Int
+  kpi_3          Int
+
+  @@id([id, nik])
+  @@index([hashedPassword], map: "hashedPassword")
+}
+
+model data_kpi {
+  id    Int    @default(autoincrement())
+  nik   String @db.VarChar(255)
+  nama  String @db.VarChar(255)
+  kpi_1 String @db.VarChar(255)
+  kpi_2 String @db.VarChar(255)
+  kpi_3 String @db.VarChar(255)
+
+  @@id([id, nik])
 }

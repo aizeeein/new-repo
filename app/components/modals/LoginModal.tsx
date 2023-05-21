@@ -27,7 +27,7 @@ const LoginModal = () => {
     formState: { errors },
   } = useForm<FieldValues>({
     defaultValues: {
-      email: "",
+      nik: "",
       password: "",
     },
   });
@@ -53,6 +53,11 @@ const LoginModal = () => {
     });
   };
 
+  const toggle = useCallback(() => {
+    loginModal.onClose();
+    registerModal.onOpen();
+  }, [loginModal, registerModal]);
+
   const bodyContent = (
     <div className="flex flex-col gap-4">
       <Heading
@@ -61,8 +66,8 @@ const LoginModal = () => {
         center={false}
       />
       <Input
-        id="email"
-        label="Email"
+        id="nik"
+        label="NIK"
         disabled={isLoading}
         register={register}
         errors={errors}
@@ -105,12 +110,12 @@ const LoginModal = () => {
         "
       >
         <div className="justify-center flex flex-row items-center gap-2">
-          <div>Already Have an account?</div>
+          <div>Belum punya akun?</div>
           <div
-            onClick={registerModal.onClose}
+            onClick={toggle}
             className="text-neutral-800 cursor-pointer hover:underline"
           >
-            Log in
+            Buat Akun
           </div>
         </div>
       </div>
